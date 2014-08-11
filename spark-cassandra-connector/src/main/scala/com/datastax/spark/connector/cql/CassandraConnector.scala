@@ -75,6 +75,7 @@ class CassandraConnector(conf: CassandraConnectorConf)
       val myNodes = nodesInTheSameDC(_config.hosts, allNodes).map(_.getAddress)
       _config = _config.copy(hosts = myNodes)
 
+
       // We need a separate SessionProxy here to protect against double closing the session.
       // Closing SessionProxy is not really closing the session, because sessions are shared.
       // Instead, refcount is decreased. But double closing the same Session reference must not
@@ -156,7 +157,7 @@ object CassandraConnector extends Logging {
         .withPort(conf.nativePort)
         .withRetryPolicy(new MultipleRetryPolicy(retryCount))
         .withReconnectionPolicy(new ExponentialReconnectionPolicy(minReconnectionDelay, maxReconnectionDelay))
-        .withLoadBalancingPolicy(new LocalNodeFirstLoadBalancingPolicy(conf.hosts))
+        //.withLoadBalancingPolicy(new LocalNodeFirstLoadBalancingPolicy(conf.hosts))
         .withAuthProvider(conf.authConf.authProvider)
         .build()
 

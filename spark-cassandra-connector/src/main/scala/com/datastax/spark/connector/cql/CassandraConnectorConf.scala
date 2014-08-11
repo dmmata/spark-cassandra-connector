@@ -34,11 +34,14 @@ object CassandraConnectorConf {
   }
 
   def apply(conf: SparkConf): CassandraConnectorConf = {
-    val host = InetAddress.getByName(conf.get(CassandraConnectionHostProperty, InetAddress.getLocalHost.getHostAddress))
+    val hostSet = conf.get(CassandraConnectionHostProperty, InetAddress.getLocalHost.getHostAddress).split(",").toSet
+    val hosts = hostSet.map(h => InetAddress.getByName(h))
+    //val host = InetAddress.getByName(conf.get(CassandraConnectionHostProperty, InetAddress.getLocalHost.getHostAddress))
     val rpcPort = conf.getInt(CassandraConnectionRpcPortProperty, DefaultRpcPort)
     val nativePort = conf.getInt(CassandraConnectionNativePortProperty, DefaultNativePort)
     val authConf = AuthConf.fromSparkConf(conf)
-    CassandraConnectorConf(Set(host), nativePort, rpcPort, authConf)
+    // DM2 CassandraConnectorConf(Set(host), nativePort, rpcPort, authConf)
+    CassandraConnectorConf(hosts, nativePort, rpcPort, authConf)
   }
   
 }
